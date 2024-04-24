@@ -38,8 +38,8 @@ jobs:
         cache: maven
     - name: Maven Build
       run: mvn -B -DskipTests package
-           rm -rF .git/config
     - name: Black Duck Full Scan
+      run: rm -rF .git/config
       if: ${{ github.event_name != 'pull_request' }}
       uses: synopsys-sig/synopsys-action@v1.9.0
       env:
