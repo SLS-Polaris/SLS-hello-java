@@ -1,0 +1,34 @@
+Name: 'AEP Action: Synopsys Project Check'
+description: 'Standard AEP Action that perform an Synopsys Code Dx Analysis for your Project'
+author: 'Mark Ritchey'
+
+inputs:
+  CodeDx_API_Token:
+    description: Code Dx API Token for Application
+    required: true
+  CodeDx_URL: 
+    description: URL for Code Dx
+    required: false
+    default: 'https://codedx-test.aepsc.com/codedx'
+
+runs:
+# ----------- Composite required for Action Definition-------------
+  using: 'composite'
+
+  steps:      
+    - name: SRM Analysis
+      #if: ${{ github.event_name == 'push' }}
+      # if: ${{ github.event_name != 'pull_request' }}
+      uses: 'codedx/codedx-github-action@v1.2.0'
+      with:
+        server-url: '${{inputs.CodeDx_URL}}'
+        api-key: ${{inputs.CodeDx_API_Token}}
+        ca-cert: '${{env.AEP_CERT_VALUE}}'
+        # ER CDX-1693 support project-name
+        project-name: ${{ github.event.repository.name }}
+        # project-id: "4;branch=${{ github.ref_name }}"  
+        # ER CDX-1666 support branch-name
+        base-branch-name: ${{ github.event.repository.default_branch }}
+        target-branch-name: ${{ github.ref_name }}              
+        source-and-binaries-glob: './**'      # commenting it out to test a different SRM server. This may not be correct. 
+        wait-for-completion: true

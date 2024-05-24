@@ -1,0 +1,16 @@
+name: Maven Build and Artifactory Push
+on:
+  workflow_dispatch:
+jobs:
+  build-maven:
+    name: 'Build & Test Maven Project, Push to Artifactory, and Scan with Xray'
+    #uses: aep-actions/Standard-Workflows/.github/workflows/Maven-Build-Push-Scan.yml@main
+    #uses: aep-actions/Standard-Workflows/.github/workflows/Maven-Build-Push-Scan.yml@20220804-Coverity
+    uses: aep-actions/Standard-Workflows/.github/workflows/Maven-Build-Push-Scan.yml@20230421-BlackDuck
+    with:
+      Runs_On: 'gitapnat04'
+      Artifactory_Dependency_Releases_Lib: 'test-aep-repo-1-maven-dev-local'
+      Artifactory_Dependency_Snapshots_Lib: 'test-aep-repo-1-maven-dev-local'
+      Artifactory_Deployment_Releases_Lib: 'test-aep-repo-1-maven-dev-local'
+      Artifactory_Deployment_Snapshots_Lib: 'test-aep-repo-1-maven-dev-local'
+    secrets: inherit

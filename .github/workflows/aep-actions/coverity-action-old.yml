@@ -1,0 +1,64 @@
+Name: 'AEP Action: Coverity Build/Scan - old workflow'
+description: 'Standard AEP Action for Performing a Coverity Build/Scan'
+author: 'Mark Ritchey'
+
+inputs:
+  #---- Coverity Inputs ------------
+  Coverity_Username:
+    type: string
+    description: 'Coverity Connect Username'
+    required: true
+  Coverity_Password:
+    type: string
+    description: 'Coverity Connect Username'
+    required: true
+  Coverity_URL:
+    type: string
+    description: ''
+    required: false
+    # default: 'https://coverity-test.aepsc.com/'
+    default: 'https://poc312.coverity.synopsys.com'
+  Coverity_Checkers:
+    type: string
+    description: 'List of all Coverity Checkers and Aggressiveness Levels (Default: all)'
+    required: false
+    default: '--all'
+      
+  #---- Project Inputs ------------
+  Project_Solution_File:
+    type: string
+    description: 'The Location and Name of the Solution file for the project (POM, csproj, etc..(other than Root))'
+    required: false
+    default: ''
+  Build_Command:
+    type: string
+    description: 'What type of Build Command to Perform (mvn, msbuild, dotnet build)'
+    required: false
+    default: ''
+  Build_Parms:
+    type: string
+    description: 'The Build Parameters'
+    required: false
+    default: ''
+  Build_Name:
+    type: string
+    description: 'The Name of the Artifactory Build'
+    required: false
+    default: '${{ github.workflow }}'
+  Build_Number:
+    type: string
+    description: 'The Build # within Artifactory'
+    required: false
+    default: ${{ github.run_number }}
+
+
+runs:
+# ----------- Composite required for Action Definition-------------
+  using: 'composite'
+  
+  steps: 
+    - name: Coverity Project Check
+      id: CoverityProjectCheck
+      run: |
+        "${{github.action_path}}/coverity-analysis.sh" "${{inputs.Project_Solution_File}}" "${{inputs.Build_Command}}" "${{inputs.Build_Parms}}" "${{inputs.Coverity_Username}}" "${{inputs.Coverity_Password}}" "${{inputs.Coverity_Checkers}}" "${{inputs.Coverity_URL}}" "${{github.event.repository.name}}" "${{github.ref_name}}"
+      shell: bash
