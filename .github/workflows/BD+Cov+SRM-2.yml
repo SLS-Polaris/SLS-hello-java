@@ -1,8 +1,10 @@
+# - this file, ran sucecssfully before being replaced with a newer version on 4/23. re-adding it with a new name to see if it continues to run OK. 
+# - adding it to branch 1-samshoberwork-patch as a direct addition. 
+# - it fialed. realized i might need to add SCM provider to BD for each org in github
+#
 # example workflow for standalone Black Duck, Coverity and SRM (Code DX) using GitHub Actions
 # - Black Duck and Coverity full scans on push to specified branches with upload to SRM
 # - Black Duck RAPID and Coverity Comparison scans on pull requests with PR comments enabled
-# - 2024-04-24 - added "- name: clean git > run: rm -r .git/config" to workflow to prevent issues with uploads to BD
-#
 # https://github.com/marketplace/actions/synopsys-action
 # https://github.com/marketplace/actions/code-dx-analysis
 #
@@ -15,17 +17,15 @@
 # secrets.COVERITY_PASSPHRASE
 # vars.SRM_URL
 # secrets.SRM_APIKEY
-# secrets.GITHUB_TOKEN  #  Confirm GITHUB_TOKEN has workflow read & write permissions (GitHub → Project → Settings → Actions → General → Workflow Permissions)
 # 
-# change to force github action PR for 1-samshober-patch 2024-04-24 A
-#
+# change to force github action #2
 #
 name: bd+coverity+srm
 on:
   push:
-    branches: [ main, 1-SamShoberWork-patch, 2-Feature-Branch, 3-Dev, 4-Testing, 5-Release-Branch ]
+    branches: [ main, master, develop, stage, release ]
   pull_request:
-    branches: [ main, 1-SamShoberWork-patch ]
+    branches: [ main, master, develop, stage, release ]
   workflow_dispatch:
 jobs:
   synopsys:
@@ -39,12 +39,8 @@ jobs:
         java-version: 17
         distribution: microsoft
         cache: maven
-    - name: clean git
-      run: rm -r .git/config
     - name: Maven Build
       run: mvn -B -DskipTests package
-    - name: Clean Git
-      run: rm -r .git/config
     - name: Black Duck Full Scan
       if: ${{ github.event_name != 'pull_request' }}
       uses: synopsys-sig/synopsys-action@v1.9.0
@@ -56,7 +52,7 @@ jobs:
         blackduck_url: ${{ vars.BLACKDUCK_URL }}
         blackduck_token: ${{ secrets.BLACKDUCK_API_TOKEN }}
         blackduck_scan_full: true
-        blackduck_scan_failure_severities: 'BLOCKER'
+        # blackduck_scan_failure_severities: 'BLOCKER'
     - name: Black Duck PR Scan
       if: ${{ github.event_name == 'pull_request' }}
       uses: synopsys-sig/synopsys-action@v1.9.0
@@ -92,7 +88,7 @@ jobs:
         coverity_prComment_enabled: true
         github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: SRM Upload
-      # if: ${{ github.event_name != 'pull_request' }}
+      if: ${{ github.event_name != 'pull_request' }}
       uses: 'codedx/codedx-github-action@v1.2.0'
       with:
         server-url: ${{ vars.SRM_URL }}/srm

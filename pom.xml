@@ -24,5 +24,21 @@
       <artifactId>log4j-slf4j-impl</artifactId>
       <version>2.14.1</version>
     </dependency>
+    	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-core</artifactId>
+		<version>4.0.1.Final</version>
+	</dependency>
+	<!-- <dependency>
+		<groupId>org.apache.tomcat</groupId>
+		<artifactId>tomcat-coyote</artifactId>
+		<version>9.0.22</version>
+	</dependency> -->
+	<dependency>
+		<groupId>io.undertow</groupId>
+		<artifactId>undertow-core</artifactId>
+		<version>2.0.9.Final</version>
+	</dependency>
   </dependencies>
+<!-- /// 2024-04-24 added hibernate, tomcat, and io.undertow to the dependency tree -->
 </project>
